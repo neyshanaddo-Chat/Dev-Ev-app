@@ -30,6 +30,7 @@
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.png" type="image/png">
   <link rel="stylesheet" href="blocks.css">
+  <link rel="stylesheet" href="tools.css">
   <style>
     /* The 3 app colours — change these to restyle everything */
     :root {
@@ -158,6 +159,7 @@
         <button class="btn" id="importProj" title="Open a project file">⬆ Import</button>
         <input type="file" id="importFile" accept=".json,application/json" hidden>
         <span class="grow"></span>
+        <a class="btn ghost" href="#tools" style="text-decoration:none" title="50 developer tools">🧰 Tools</a>
         <a class="btn ghost" href="devmode/" style="text-decoration:none" title="Edit website folders on this PC">🛠 Dev mode</a>
       </div>
       <div class="bc-main">
@@ -213,6 +215,8 @@
       </div>
     </main>
 
+    <section class="screen" id="screen-tools"><div id="toolsRoot"></div></section>
+
     <section class="screen" id="screen-settings">
       <h2>Settings</h2>
       <div class="setting-row">
@@ -255,6 +259,7 @@
       <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
     </div>
     <a class="nav-link" href="#home" data-screen="home">Home</a>
+    <a class="nav-link" href="#tools" data-screen="tools">Tools</a>
     <a class="nav-link" href="devmode/">Dev mode</a>
     <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
     <a class="nav-link" href="#values" data-screen="values">Our Values</a>
@@ -295,9 +300,9 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
     // ---- Screens (must match the screen-<name> ids and menu links) ----
-    const SCREENS = ['home', 'gallery', 'values', 'contact', 'settings', 'about'];
+    const SCREENS = ['home', 'tools', 'gallery', 'values', 'contact', 'settings', 'about'];
     function showScreen() {
-      let name = location.hash.slice(1);
+      let name = location.hash.slice(1).split('/')[0];
       if (!SCREENS.includes(name)) name = 'home';
       SCREENS.forEach((s) => document.getElementById('screen-' + s).classList.toggle('active', s === name));
       document.querySelectorAll('.nav-link').forEach((a) => a.classList.toggle('active', a.dataset.screen === name));
@@ -323,11 +328,12 @@
   </script>
 
   <script src="blocks.js"></script>
+  <script src="tools.js"></script>
 
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '2';
+    const APP_VERSION = '3';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 

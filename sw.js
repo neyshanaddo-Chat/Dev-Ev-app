@@ -1,12 +1,14 @@
 // Service worker: keeps a downloaded copy for offline use,
 // but always prefers the newest version when online.
 // Only registered on Windows (see index.html).
-const CACHE = 'app-v2'; // bump if cached files change shape
+const CACHE = 'app-v3'; // bump if cached files change shape
 const FILES = [
   './',
   'index.html',
   'blocks.js',
   'blocks.css',
+  'tools.js',
+  'tools.css',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
