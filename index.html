@@ -29,6 +29,7 @@
   </script>
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="stylesheet" href="blocks.css">
   <style>
     /* The 3 app colours — change these to restyle everything */
     :root {
@@ -145,8 +146,72 @@
       <div class="header-spacer"></div>
     </header>
 
-    <!-- Home (main screen) -->
-    <main class="screen" id="screen-home"></main>
+    <!-- Home (main screen): the block coder -->
+    <main class="screen" id="screen-home">
+      <div id="bcRoot" class="bc-bar">
+        <input id="projName" class="proj-name" aria-label="Project name" spellcheck="false">
+        <span id="saveState"></span>
+        <button class="btn" id="newProj" title="Start a new project">📄 New</button>
+        <button class="btn" id="openProj" title="Your saved projects">📂 Open</button>
+        <button class="btn" id="saveProj" title="Save (Ctrl + S)">💾 Save</button>
+        <button class="btn" id="exportProj" title="Download the project as a file">⬇ Export</button>
+        <button class="btn" id="importProj" title="Open a project file">⬆ Import</button>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+        <span class="grow"></span>
+        <a class="btn ghost" href="devmode/" style="text-decoration:none" title="Edit website folders on this PC">🛠 Dev mode</a>
+      </div>
+      <div class="bc-main">
+        <nav id="bcCats" aria-label="Block categories"></nav>
+        <div id="bcPaletteWrap"><div id="bcPalette"></div></div>
+        <div class="bc-center">
+          <div class="ws-tabs">
+            <button class="tab on" data-view="blocks">🧩 Blocks</button>
+            <button class="tab" data-view="code">&lt;/&gt; Code</button>
+            <span class="grow"></span>
+            <button class="btn small ghost" id="cleanUp" title="Line up all scripts">Clean up</button>
+          </div>
+          <div id="ws">
+            <div id="wsInner"></div>
+            <p id="wsEmpty">Drag blocks here and snap them together.<br>Click a script to run it, or press ▶.</p>
+          </div>
+          <div id="codeView" hidden>
+            <button class="btn small" id="copyCode">📋 Copy</button>
+            <pre id="codeOut"></pre>
+          </div>
+        </div>
+        <aside class="bc-stage">
+          <div class="stage-bar">
+            <button class="btn flag" id="flagBtn" title="Run (green flag)">▶ Run</button>
+            <button class="btn stopb" id="stopBtn" title="Stop everything">■ Stop</button>
+            <span id="runState"></span>
+            <span class="grow"></span>
+            <button class="btn small" id="shotBtn" title="Save a picture of the stage">📷</button>
+            <button class="btn small" id="fullBtn" title="Full screen">⛶</button>
+          </div>
+          <div id="stageWrap">
+            <canvas id="stage" width="480" height="360"></canvas>
+            <div id="askBox" hidden><strong id="askQ"></strong><div class="row"><input id="askIn" type="text"><button class="btn small primary" id="askOk">✓</button></div></div>
+          </div>
+          <div id="spriteInfo"></div>
+          <div class="stage-opts">
+            <label>Backdrop <input type="color" id="bgColor" value="#ffffff"></label>
+            <label><input type="checkbox" id="gridToggle"> x/y grid</label>
+          </div>
+          <div class="sprite-panel">
+            <div class="sprite-props">
+              <button class="btn" id="spriteEmoji" title="Change costume">🐱</button>
+              <input type="text" id="spriteName" aria-label="Sprite name" spellcheck="false">
+              <label class="small"><input type="checkbox" id="spriteShow"> show</label>
+              <span class="grow"></span>
+              <button class="btn small" id="dupSprite" title="Duplicate sprite">⧉</button>
+              <button class="btn small ghost" id="delSprite" title="Delete sprite">🗑</button>
+            </div>
+            <div id="spriteList"></div>
+            <button class="btn small" id="addSprite" style="margin-top:8px">＋ Add sprite</button>
+          </div>
+        </aside>
+      </div>
+    </main>
 
     <section class="screen" id="screen-settings">
       <h2>Settings</h2>
@@ -178,7 +243,7 @@
 
     <section class="screen" id="screen-about">
       <h2>About</h2>
-      <p>Dev Ev App — a short description goes here.</p>
+      <p>Dev Ev App — learn to code by snapping blocks together, see them as real JavaScript, and edit your websites with Dev mode.</p>
       <p class="muted" id="aboutVersion"></p>
     </section>
   </div>
@@ -190,6 +255,7 @@
       <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
     </div>
     <a class="nav-link" href="#home" data-screen="home">Home</a>
+    <a class="nav-link" href="devmode/">Dev mode</a>
     <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
     <a class="nav-link" href="#values" data-screen="values">Our Values</a>
     <a class="nav-link" href="#contact" data-screen="contact">Contact Us</a>
@@ -198,6 +264,19 @@
     <a class="nav-link" href="#settings" data-screen="settings">Settings</a>
     <a class="nav-link" href="#about" data-screen="about">About</a>
   </nav>
+
+  <div class="bc-modal" id="projModal" hidden><div class="bc-card">
+    <h3>Your projects</h3>
+    <p class="muted small">Projects are saved on this computer, in this app. Use ⬇ Export to keep a copy as a file.</p>
+    <div id="projList"></div>
+    <div class="row" style="margin-top:10px"><span class="grow"></span><button class="btn" id="projClose">Close</button></div>
+  </div></div>
+  <div class="bc-modal" id="emojiModal" hidden><div class="bc-card">
+    <h3 id="emojiTitle">Pick a sprite</h3>
+    <div id="emojiGrid"></div>
+    <div class="row"><input type="text" id="emojiCustom" placeholder="or type/paste any emoji" maxlength="8"><button class="btn primary" id="emojiOk">Use</button><span class="grow"></span><button class="btn" id="emojiCancel">Cancel</button></div>
+  </div></div>
+  <div id="bcToast"></div>
 
   <script>
     // ---- Sidebar open / close ----
@@ -243,10 +322,12 @@
     applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
   </script>
 
+  <script src="blocks.js"></script>
+
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '1';
+    const APP_VERSION = '2';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 

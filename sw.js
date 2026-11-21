@@ -1,10 +1,12 @@
 // Service worker: keeps a downloaded copy for offline use,
 // but always prefers the newest version when online.
 // Only registered on Windows (see index.html).
-const CACHE = 'app-v1'; // bump if cached files change shape
+const CACHE = 'app-v2'; // bump if cached files change shape
 const FILES = [
   './',
   'index.html',
+  'blocks.js',
+  'blocks.css',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
@@ -19,7 +21,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('app-') && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
